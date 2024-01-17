@@ -277,11 +277,13 @@ void main_logi(bool& stopF, bool& showF, WheelState& logiState)
 			else if (LogiButtonTriggered(controller_idx, 5))
 				logiState.shiftGearDown();
 			if (LogiButtonTriggered(controller_idx, 1))
-				logiState.setMotionType(1);
+				logiState.setMotionType(1);// Ackermann turn
 			else if (LogiButtonTriggered(controller_idx, 3))
-				logiState.setMotionType(2);
+				logiState.setMotionType(2);// 4ws center baseline
 			else if (LogiButtonTriggered(controller_idx, 2))
-				logiState.setMotionType(3);
+				logiState.setMotionType(3);// Zero turn
+			else if (LogiButtonTriggered(controller_idx, 0))
+				logiState.setMotionType(4);// Parallel turn
 		}
 		catch (...)
 		{
