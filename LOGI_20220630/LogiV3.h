@@ -10,7 +10,11 @@
 #include <vector>
 #include <mutex>
 #include <atomic>
+#include <chrono>
+
 #include <LogitechSteeringWheelLib.h>
+
+using namespace std::chrono_literals;
 
 enum class GearState { Park, Reverse, Neutral, Drive };
 
@@ -80,15 +84,9 @@ public:
 		this->isInitF_ = true;
 	}
 
-	void setGHubF(bool _flag)
-	{
-		this->GHubF_ = _flag;
-	}
+	void setGHubF(bool _flag) { this->GHubF_ = _flag; }
 
-	void setMsg(std::string _msg)
-	{
-		this->_safeSave(&this->msg_, _msg);
-	}
+	void setMsg(std::string _msg) { this->_safeSave(&this->msg_, _msg); }
 
 	void setPadel(int _gas, int _brake, int _clutch)
 	{
@@ -239,12 +237,13 @@ inline void wctoc(const wchar_t* wchar, char* dst, size_t BUFFSIZE)
 
 void main_logi(bool& stopF, bool& showF, WheelState& logiState)
 {
-	if (!LogiSteeringInitialize(FALSE))
+	logiState.setGHubF(false);
+	while (!LogiSteeringInitialize(true) && !stopF)
 	{
 		logiState.setMsg("LogiSteering Initialize Failed.");
-		return;
+		std::this_thread::sleep_for(500ms);
 	}
-		
+	logiState.setGHubF(true);
 	logiState.setMsg("LogiSteering Initialized.");
 	int controller_idx = logiState.getIndex();
 	DIJOYSTATE2* SWState = LogiGetState(controller_idx);
